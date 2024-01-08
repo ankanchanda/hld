@@ -1,5 +1,5 @@
 # Syetem Design
-- Reference: System Designer's Interview, An insider's guide by Alex Xu
+Reference: System Designer's Interview, An insider's guide by Alex Xu
 
 ### Single Server Setup
 Considering a scenario for a system with 1 server
