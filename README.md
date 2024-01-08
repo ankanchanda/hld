@@ -71,3 +71,5 @@ With this setup, web servers are unreachable directly by clients anymore. For be
 Through the help of load balancer we can solve the issue of *no failover* and improved the availability of the web tier. This was achieved as follows:
 - If server 1 goes offline, all the traffic will be routed to server 2. This prevents the website from going offline. We will also add a new healthy web server to the server pool to balance the load.
 - If the website traffic grows rapidly, and two servers are not enough to handle the traffic, the load balancer can handle this problem gracefully. You only need to add more servers to the web server pool, and the load balancer automatically starts to send requests to them.
+
+### Data Replication
