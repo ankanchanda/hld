@@ -3,7 +3,7 @@ Reference: System Designer's Interview, An insider's guide by Alex Xu
 
 ### Single Server Setup
 Considering a scenario for a system with 1 server
-![Alt text](image.png)
+![single-server-architecture](assets/single-server-architecture.png)
 - Users access websites through domain names, such as api.mysite.com. Usually, the Domain Name System (DNS) is a paid service provided by 3rd parties and not hosted by our servers.
 - Internet Protocol (IP) address is returned to the browser or mobile app. In the example, IP address 15.125.23.214 is returned.
 - Once the IP address is obtained, Hypertext Transfer Protocol (HTTP) [[1]](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) requests are sent directly to your web server.
@@ -54,3 +54,20 @@ Non-relational databases might be the right choice if:
 - You need to store a massive amount of data. 
 
 ```Latency: The delay before a transfer of data begins following an instruction for its transfer```
+
+
+### Load balancer
+If many users access the web server simultaneously and it reaches the web server’s load limit, users generally experience slower response or fail to connect to the server. A load balancer is the best technique to address these problems.
+
+A load balancer evenly distributes incoming traffic among web servers that are defined in a load-balanced set.
+
+![load-balancer](assets/load-balancer.png)
+
+With this setup, web servers are unreachable directly by clients anymore. For better security, private IPs are used for communication between servers. *The load balancer communicates with web servers through private IPs.*
+
+
+```A private IP is an IP address reachable only between servers in the same network; however, it is unreachable over the internet.```
+
+Through the help of load balancer we can solve the issue of *no failover* and improved the availability of the web tier. This was achieved as follows:
+- If server 1 goes offline, all the traffic will be routed to server 2. This prevents the website from going offline. We will also add a new healthy web server to the server pool to balance the load.
+- If the website traffic grows rapidly, and two servers are not enough to handle the traffic, the load balancer can handle this problem gracefully. You only need to add more servers to the web server pool, and the load balancer automatically starts to send requests to them.
