@@ -81,7 +81,7 @@ Database replication can be used in many database management systems, usually wi
 - All the data-modifying commands like insert, delete, or update must be sent to the master database.
 - Most applications require a much higher ratio of reads to writes; thus, the number of slave databases in a system is usually larger than the number of master databases.
 
-![data-replication](assets/data-replication.png)
+![data-replication](assets/data-replication.png){: height="36px" width="36px"}
 
 
 Advantages of database replication:
