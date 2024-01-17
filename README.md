@@ -122,3 +122,41 @@ Complexities of promoting a new Master:
 - The HTTP request is routed to either Server 1 or Server 2. 
 - A web server reads user data from a slave database.
 - A web server routes any data-modifying operations to the master database. This includes write, update, and delete operations.
+
+
+### Cache
+A cache is a temporary storage area that stores the result of expensive responses or frequently accessed data in memory so that subsequent requests are served more quickly.
+
+Every time a new web page loads, one or more database calls are executed to fetch data, in result the application performance is greatly affected by calling the database repeatedly.
+
+### Cache Tier
+The cache tier is a temporary data store layer, much faster than the database.
+
+The benefits of having a separate cache tier include
+- better system performance
+- ability to reduce database workloads
+- the ability to scale the cache tier independently
+
+![Cache Tier](assets/cache-tier.png)
+
+After receiving a request, a web server first checks if the cache has the available response. If it has, it sends data back to the client. If not, it queries the database, stores the response in cache, and sends it back to the client.
+This caching strategy is called a **read-through cache**.
+
+Other caching strategies are available depending on the data type, size, and access pattern.
+
+
+### Caching Strategies and How to Choose the Right One
+Reference: https://codeahoy.com/2017/08/11/caching-strategies-and-how-to-choose-the-right-one/
+
+If done right, caches can reduce response times, decrease load on database, and save costs. There are several strategies and choosing the right one can make a big difference.
+
+Your caching strategy depends on the data and data access patterns. In other words, how the data is written and read.
+
+- is the system write heavy and reads less frequently? (e.g. time based logs)
+- is data written once and read multiple times? (e.g. User Profile)
+- is data returned always unique? (e.g. search queries)
+
+A caching strategy for Top-10 leaderboard system for mobile games will be very different than a service which aggregates and returns user profiles.
+
+
+#### Cache-Aside
