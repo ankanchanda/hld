@@ -160,3 +160,19 @@ A caching strategy for Top-10 leaderboard system for mobile games will be very d
 
 
 #### Cache-Aside
+![Cache-Aside](assets/cache-aside.png)
+
+**Use cases**
+- General purpose, and used for read-heavy workloads
+
+**Pros**
+- If the cache cluster goes down, the system can still operate by going directly to the database.
+- Data model in cache can be different than the data model in database. (response generated as a result of multiple queries can be stored against some request id.)
+
+**Cons**
+- It doesn’t help much if cache goes down during peak load. Response times can become terrible and in worst case, the database can stop working.
+
+**Write Startegy**
+The most common write startegy is to write the data directly to the database but this may lead to incosistency of cache.
+
+Developers' use TTL strategy to deal with this. The cache keeps serving stale data till TTL expires.
