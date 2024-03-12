@@ -176,3 +176,24 @@ A caching strategy for Top-10 leaderboard system for mobile games will be very d
 The most common write startegy is to write the data directly to the database but this may lead to incosistency of cache.
 
 Developers' use TTL strategy to deal with this. The cache keeps serving stale data till TTL expires.
+
+#### Read-Through Cache
+Read-through cache sits in-line with the database. When there is a cache miss, it loads missing data from database, populates the cache and returns it to the application.
+
+![alt text](assets/read-through.png)
+Both cache-aside and read-through strategies load data lazily, that is, only when it is first read.
+
+**Differences between cache-a-side and read-through cache**
+1. In cache-aside, the application is responsible for fetching data from the database and populating the cache. In read-through, this logic is usually supported by the library or stand-alone cache provider.
+2. Unlike cache-aside, the data model in read-through cache cannot be different than that of the database.
+
+**Pros**
+- Read-through caches work best for read-heavy workloads when the same data is requested many times.
+
+**Cons**
+- When the data is requested the first time, it always results in cache miss and incurs the extra penalty of loading data to the cache.
+
+  Developers deal with this by ‘warming’ or ‘pre-heating’ the cache by issuing queries manually.
+- Just like cache-aside, it is also possible for data to become inconsistent between cache and the database, and solution lies in the write strategy, as we’ll see next.
+
+#### Write-Through Cache
