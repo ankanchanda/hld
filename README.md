@@ -197,3 +197,38 @@ Both cache-aside and read-through strategies load data lazily, that is, only whe
 - Just like cache-aside, it is also possible for data to become inconsistent between cache and the database, and solution lies in the write strategy, as we’ll see next.
 
 #### Write-Through Cache
+In this write strategy, data is first written to the cache and then to the database. The cache sits in line with the database and writes always go through the cache to the main database. This helps cache maintain consistency with the main database.
+
+![write-through-cache](assets/write-through-cache.png)
+
+On its own, write-through caches don’t seem to do much, in fact, they introduce extra write latency because data is written to the cache first and then to the main database (two write operations.)
+
+But when paired with read-through caches, we get all the benefits of read-through and we also get data consistency guarantee, freeing us from using cache invalidation (assuming ALL writes to the database go through the cache.)
+
+Example: 
+[DynamoDB Accelerator(DAX)](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAX.consistency.html)
+
+#### Write Around Cache
+Here, data is written directly to the database and only the data that is read makes it way into the cache.
+
+**Uses:**
+
+Write-around can be combine with read-through and provides good performance in situations where data is written once and read less frequently or never. 
+
+Example: Realtime logs, chatroom messages
+
+#### Write-Back or Write-Behind
+Here, the application writes data to the cache which stores the data and acknowledges to the application immediately. Then later, the cache writes the data back to the database.
+
+**Difference between Write-Through and Write-Behind cache**
+- In Write-Through, the data written to the cache is synchronously updated in the main database. In Write-Back, the data written to the cache is asynchronously updated in the main database. 
+- From the application perspective, writes to Write-Back caches are faster because only the cache needed to be updated before returning a response.
+
+**Pros**
+- Write back caches improve the write performance and are good for write-heavy workloads. When combined with read-through, it works good for mixed workloads, where the most recently updated and accessed data is always available in cache.
+- It’s resilient to database failures and can tolerate some database downtime. If batching or coalescing is supported, it can reduce overall writes to the database, which decreases the load and reduces costs, if the database provider charges by number of requests
+
+
+**NOTES:**
+- Batching, coalescing means that you only send the latest mutation on a per key basis to the CacheLoaderWriter.
+- Mutations are used to send data updates to the server and apply the changes to the local cache.
