@@ -325,3 +325,21 @@ An application supports photo customization, including cropping, sharpening, blu
 - Web servers publish photo processing jobs to the message queue.
 - Photo processing workers pick up jobs from the message queue and asynchronously perform photo customization tasks.
 - The producer and the consumer can be scaled independently. When the size of the queue becomes large, more workers are added to reduce the processing time. However, if the queue is empty most of the time, the number of workers can be reduced.
+
+
+#### Logging, metrics, automation
+- Isite has grown to serve a large business, investing in those tools is essential.
+- When working with a small website that runs on a few servers, logging, metrics, and automation support are good practices but not a necessity.
+
+- Logging: Monitoring error logs is important because it helps to identify errors and problems in the system. You can monitor error logs at per server level or use tools to aggregate them to a centralized service for easy search and viewing.
+- Metrics: Collecting different types of metrics help us to gain business insights and understand the health status of the system. Some of the following metrics are useful:
+  - Host level metrics: CPU, Memory, disk I/O, etc.
+  - Aggregated level metrics: for example, the performance of the entire database tier, cache tier, etc.
+  - Key business metrics: daily active users, retention, revenue, etc
+- Automation: When a system gets big and complex, we need to build or leverage automation tools to improve productivity. Continuous integration is a good practice, in which each code check-in is verified through automation, allowing teams to detect problems early. Besides, automating your build, test, deploy process, etc. could improve developer productivity significantly.
+
+
+#### Architecture after message queues addition
+![alt text](assets/architecture-after-message-queues.png)
+- The design includes a message queue, which helps to make the system more loosely coupled and failure resilient.
+- Logging, monitoring, metrics, and automation tools are included.
