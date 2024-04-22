@@ -308,3 +308,20 @@ Several technical challenges must be resolved to achieve multi-data center setup
 - Test and deployment: With multi-data center setup, it is important to test your website/application at different locations. Automated deployment tools are vital to keep services consistent through all the data centers
 
 ### Message Queue
+- A message queue is a durable component, stored in memory, that supports asynchronous communication.
+- It serves as a buffer and distributes asynchronous requests.
+- Basic Architecture: Input services, called producers/publishers, create messages, and publish them to a message queue
+- Other services or servers, called consumers/subscribers, connect to the queue, and perform actions defined by the messages.
+
+![alt text](assets/message-queue.png)
+
+- Decoupling makes the message queue a preferred architecture for building a scalable and reliable application.
+- With the message queue, the producer can post a message to the queue when the consumer is unavailable to process it. The consumer can read messages from the queue even when the producer is unavailable.
+
+#### Use case
+An application supports photo customization, including cropping, sharpening, blurring, etc. Those customization tasks take time to complete.
+
+![alt text](assets/message-queue-photo-processing.png)
+- Web servers publish photo processing jobs to the message queue.
+- Photo processing workers pick up jobs from the message queue and asynchronously perform photo customization tasks.
+- The producer and the consumer can be scaled independently. When the size of the queue becomes large, more workers are added to reduce the processing time. However, if the queue is empty most of the time, the number of workers can be reduced.
