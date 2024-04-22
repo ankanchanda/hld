@@ -253,3 +253,58 @@ Here, the application writes data to the cache which stores the data and acknowl
 - Eviction Policy: Once the cache is full, any requests to add items to the cache might cause existing items to be removed. This is called cache eviction.
 
   Least-recently-used (LRU) is the most popular cache eviction policy. Other eviction policies, such as the Least Frequently Used (LFU) or First in First Out (FIFO), can be adopted to satisfy different use cases.
+
+### Content Delivery Network(CDN)
+A CDN is a network of geographically dispersed servers used to deliver static content. CDN servers cache static content like CSS, JSfiles, images, videos, etc. It enables the caching of HTML pages that are based on request path, query strings, cookies, and request headers.
+
+Here is how CDN works at the high-level: when a user visits a website, a CDN server closest to the user will deliver static content. Intuitively, the further users are from CDN servers, the slower the website loads.
+
+![cdn](assets/cdn.png)
+
+
+Considerations of using a CDN
+- CDN fallback: You should consider how your website/application copes with CDN failure. If there is a temporary CDN outage, clients should be able to detect the problem and request resources from the origin.
+
+### Architecture After CDN Addition
+![alt text](assets/architecture-after-cdn.png)
+
+1. Static assets (JS, CSS, images, etc.,) are no longer served by web servers. They are fetched from the CDN for better performance.
+2. The database load is lightened by caching data.
+
+### Stateless web tier
+A good practice is to store session data in the persistent storage such as relational database or NoSQL. Each web server in the cluster can access state data from databases. This is called stateless web tier.
+
+### Stateful architecture
+A stateful server remembers client data (state) from one request to the next. A stateless server keeps no state information.
+![alt text](assets/stateful-architecture.png)
+
+- User A’s session data and profile image are stored in Server 1. To authenticate User A, HTTP requests must be routed to Server 1. 
+- If a request is sent to other servers like Server 2, authentication would fail because Server 2 does not contain User A’s session data. Similarly, all HTTP requests from User B must be routed to Server 2; all requests from User C must be sent to Server 3.
+- The issue is that every request from the same client must be routed to the same server. This can be done with sticky sessions in most load balancers; however, this adds the overhead. Adding or removing servers is much more difficult with this approach. It is also challenging to handle server failures.
+
+
+### Stateless Architecture
+![alt text](assets/stateless-architecture.png)
+
+In this stateless architecture, HTTP requests from users can be sent to any web servers, which fetch state data from a shared data store. State data is stored in a shared data store and kept out of web servers. A stateless system is simpler, more robust, and scalable.
+
+
+#### Architecture After stateless web tier
+![alt text](assets/architecture-after-stateless-web-tier.png)
+
+- We move the session data out of the web tier and store them in the persistent data store.
+- The shared data store could be a relational database, Memcached/Redis, NoSQL, etc. The NoSQL data store is chosen as it is easy to scale.
+- Autoscaling means adding or removing web servers automatically based on the traffic load. After the state data is removed out of web servers, auto-scaling of the web tier is easily achieved by adding or removing servers based on traffic load.
+
+### Data centers
+![alt text](assets/data-centers.png)
+- In normal operation, users are geoDNS-routed, also known as geo-routed, to the closest data center, with a split traffic of x% in US-East and (100 – x)% in US-West.
+- geoDNS is a DNS service that allows domain names to be resolved to IP addresses based on the location of a user.
+- In the event of any significant data center outage, we direct all traffic to a healthy data center.
+
+Several technical challenges must be resolved to achieve multi-data center setup:
+-  Traffic redirection: Effective tools are needed to direct traffic to the correct data center. GeoDNS can be used to direct traffic to the nearest data center depending on where a user is located.
+- Data synchronization: Users from different regions could use different local databases or caches. In failover cases, traffic might be routed to a data center where data is unavailable. A common strategy is to replicate data across multiple data centers.
+- Test and deployment: With multi-data center setup, it is important to test your website/application at different locations. Automated deployment tools are vital to keep services consistent through all the data centers
+
+### Message Queue
