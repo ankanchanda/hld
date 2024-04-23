@@ -343,3 +343,51 @@ An application supports photo customization, including cropping, sharpening, blu
 ![alt text](assets/architecture-after-message-queues.png)
 - The design includes a message queue, which helps to make the system more loosely coupled and failure resilient.
 - Logging, monitoring, metrics, and automation tools are included.
+
+## Database scaling
+### Vertical scaling
+- Vertical scaling, also known as scaling up, is the scaling by adding more power (CPU, RAM, DISK, etc.) to an existing machine.
+- There are some powerful database servers. According to Amazon Relational Database Service (RDS), you can get a database server with 24 TB of RAM. This kind of powerful database server could store and handle lots of data. 
+
+#### Drawbacks of Vertical Scaling
+- You can add more CPU, RAM, etc. to your database server, but there are hardware limits. If you have a large user base, a single server is not enough.
+- Greater risk of single point of failures.
+- The overall cost of vertical scaling is high. Powerful servers are much more expensive.
+
+### Horizontal Scaling
+- Horizontal scaling, also known as sharding, is the practice of adding more servers.
+- Sharding separates large databases into smaller, more easily managed parts called shards.
+
+![alt text](assets/db-vertical-vs-horizontal.png)
+
+#### Shards
+![alt text](assets/shards.png)
+- Each shard shares the same schema, though the actual data on each shard is unique to the shard
+- The most important factor to consider when implementing a sharding strategy is the choice of the sharding key.
+- Sharding key (known as a partition key) consists of one or more columns that determine how data is distributed. E.g. “user_id” is the sharding key.
+- A sharding key allows you to retrieve and modify data efficiently by routing database queries to the correct database.
+- Choose a key that can evenly distributed data
+
+### Challenges of Shrading
+- Resharding data is needed when
+  - a single shard could no longer hold more data due to rapid growth
+  - Certain shards might experience shard exhaustion faster than others due to uneven data distribution.
+- When shard exhaustion happens, it requires updating the sharding function and moving data around. Consistent hashing is a commonly used technique to solve this problem.
+- Celebrity problem: This is also called a hotspot key problem. Excessive access to a specific shard could cause server overload. Imagine data for Katy Perry, Justin Bieber, and Lady Gaga all end up on the same shard. To solve this problem, we may need to allocate a shard for each celebrity. Each shard might even require further partition.
+- Join and de-normalization: Once a database has been sharded across multiple servers, it is hard to perform join operations across database shards. A common workaround is to de- normalize the database so that queries can be performed in a single table.
+
+#### Architecture after sharding
+![alt text](assets/architecture-after-sharding.png)
+
+- shard databases to support rapidly increasing data traffic.
+- some of the non-relational functionalities are moved to a NoSQL data store to reduce the database load.
+
+## Summary
+- Keep web tier stateless
+- Build redundancy at every tier
+- Cache data as much as you can
+- Support multiple data centers
+- Host static assets in CDN
+- Scale your data tier by sharding
+- Split tiers into individual services
+- Monitor your system and use automation tools
